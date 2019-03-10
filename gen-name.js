@@ -62,6 +62,11 @@
       maxLength = 25;
       maximumLengthField.value = 25;
     }
+
+    if (maxLength < 2){
+      maxLength = 2;
+      maximumLengthField.value = 2;
+    }
     if (nameCount < 1){
       nameCount = 1;
       nameCountField.value = 1;
