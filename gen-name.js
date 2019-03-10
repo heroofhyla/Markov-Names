@@ -6,9 +6,11 @@
 
   let generateName = function(namesList, minLength, maxLength){
     let markovName = "";
+    respectingLimits:
     while (markovName.length < minLength || markovName.length > maxLength){
       let namesArray = namesList.split("\n");
       markovName = sample(namesArray)[0];
+      buildingName:
       while (true){
         let splitStr = markovName[markovName.length - 1];
         if (markovName.length > 1){
@@ -20,9 +22,21 @@
         if (nextSample.length > 0){
           let nextChar = nextSample[0];
           if (nextChar == "\n"){
-            break;
+            if (markovName.length >= minLength && markovName.length <= maxLength){
+              break respectingLimits;
+            } else{
+              for (let ii = 0, imax = namesArray.length; ii < imax; ii++){
+                if (namesArray[ii][0] != "\n"){
+                  continue buildingName;
+                }
+                continue respectingLimits;
+              }
+            }
           }
           markovName += nextChar;
+          if (markovName.length > maxLength){
+            continue respectingLimits;
+          }
         }
       }
     }
@@ -39,9 +53,19 @@
 
   generatorForm.addEventListener("submit", function(event){
     event.preventDefault();
-    let nameCount = nameCountField.value;
-    let minLength = minimumLengthField.value;
-    let maxLength = maximumLengthField.value;
+    let nameCount = parseInt(nameCountField.value);
+    let minLength = parseInt(minimumLengthField.value);
+    let maxLength = parseInt(maximumLengthField.value);
+    if ((minLength > maxLength) || (maxLength < 0)){
+      minLength = 1;
+      minimumLengthField.value = 1;
+      maxLength = 25;
+      maximumLengthField.value = 25;
+    }
+    if (nameCount < 1){
+      nameCount = 1;
+      nameCountField.value = 1;
+    }
     let names = [];
     for (let ii = 0; ii < nameCount; ii++){
       names.push(generateName(namesList, minLength, maxLength));
